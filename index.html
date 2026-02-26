@@ -193,7 +193,6 @@
     border-radius: 10px;
     border-left: 3px solid var(--accent);
     margin-bottom: 32px;
-    white-space: pre-wrap;
   }
 
   /* BUTTONS */
@@ -529,12 +528,248 @@
     pointer-events: none;
     user-select: none;
   }
+  /* EDITOR BUTTON IN HEADER */
+  .btn-editor-open {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-mid);
+    padding: 7px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .btn-editor-open:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* EDITOR SCREEN */
+  .editor-screen {
+    width: 100%;
+    max-width: 680px;
+    animation: cardIn 0.4s cubic-bezier(0.4,0,0.2,1) both;
+  }
+
+  .editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+
+  .editor-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .editor-title span {
+    color: var(--accent);
+    margin-left: 8px;
+  }
+
+  .btn-editor-close {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 7px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-editor-close:hover { border-color: var(--text-mid); color: var(--text); }
+
+  .editor-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+
+  .editor-form-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .editor-field {
+    margin-bottom: 16px;
+  }
+
+  .editor-field label {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .editor-field textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    padding: 12px 14px;
+    resize: vertical;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+
+  .editor-field textarea:focus { border-color: var(--accent); }
+  .editor-field textarea::placeholder { color: var(--text-dim); }
+
+  .btn-editor-save {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    background: var(--accent-dim);
+    border: 1px solid rgba(212,168,83,0.3);
+    color: var(--accent);
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-editor-save:hover { background: rgba(212,168,83,0.2); border-color: var(--accent); }
+
+  .btn-editor-cancel {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-editor-cancel:hover { border-color: var(--red); color: var(--red); }
+
+  /* CARDS LIST */
+  .editor-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+
+  .editor-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .editor-card:hover { border-color: var(--surface2); }
+  .editor-card.editing { border-color: var(--accent); }
+  .editor-card.drag-over { border-color: var(--accent); background: var(--surface2); }
+
+  .drag-handle {
+    font-size: 1.1rem;
+    color: var(--border);
+    cursor: grab;
+    padding: 2px 4px;
+    flex-shrink: 0;
+    user-select: none;
+    transition: color 0.15s;
+  }
+  .drag-handle:hover { color: var(--text-dim); }
+
+  .editor-card-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    min-width: 24px;
+    padding-top: 2px;
+  }
+
+  .editor-card-body { flex: 1; min-width: 0; }
+
+  .editor-card-q {
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 6px;
+    white-space: pre-wrap;
+  }
+
+  .editor-card-a {
+    font-size: 0.8rem;
+    font-style: italic;
+    color: var(--text-dim);
+    white-space: pre-wrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .editor-card-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .btn-card-edit, .btn-card-del {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    transition: all 0.15s;
+  }
+
+  .btn-card-edit { color: var(--text-dim); }
+  .btn-card-edit:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-card-del { color: var(--text-dim); }
+  .btn-card-del:hover { border-color: var(--red); color: var(--red); }
+
+  /* EXPORT */
+  .editor-export {
+    text-align: center;
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn-export {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-export:hover { border-color: var(--text-mid); color: var(--text); }
+
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">flash<em>cards</em></div>
+  <div style="display:flex;align-items:center;gap:20px">
+  <button class="btn-editor-open" onclick="openEditor()">✏️ Карточки</button>
   <div class="stats-bar">
     <div class="stat">
       <div class="stat-dot green"></div>
@@ -547,7 +782,41 @@
       <span class="stat-val" id="stat-dontknow">0</span>
     </div>
   </div>
+  </div>
 </header>
+
+<!-- EDITOR SCREEN -->
+<div class="editor-screen" id="editor-screen" style="display:none">
+  <div class="editor-header">
+    <div class="editor-title">Редактор карточек <span id="editor-count"></span></div>
+    <button class="btn-editor-close" onclick="closeEditor()">← Назад</button>
+  </div>
+
+  <!-- Add new card form -->
+  <div class="editor-form" id="editor-form">
+    <div class="editor-form-title" id="editor-form-title">Новая карточка</div>
+    <div class="editor-field">
+      <label>Вопрос</label>
+      <textarea id="input-q" placeholder="Введите вопрос..." rows="3"></textarea>
+    </div>
+    <div class="editor-field">
+      <label>Ответ</label>
+      <textarea id="input-a" placeholder="Введите ответ..." rows="5"></textarea>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-editor-save" id="btn-save-card" onclick="saveCard()">Сохранить</button>
+      <button class="btn-editor-cancel" id="btn-cancel-edit" onclick="cancelEdit()" style="display:none">Отмена</button>
+    </div>
+  </div>
+
+  <!-- Cards list -->
+  <div class="editor-list" id="editor-list"></div>
+
+  <!-- Export -->
+  <div class="editor-export">
+    <button class="btn-export" onclick="exportJSON()">⬇ Скачать cards.json</button>
+  </div>
+</div>
 
 <!-- START SCREEN -->
 <div class="start-screen" id="start-screen">
@@ -637,6 +906,137 @@ let answered = false;
 let lastChoice = null;
 
 const LS_KEY = 'flashcards_saved_wrong';
+
+// ——— EDITOR ———
+let editingIndex = null;
+
+function openEditor() {
+  document.getElementById('editor-screen').style.display = 'block';
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('card-wrap').style.display = 'none';
+  document.getElementById('complete').classList.remove('visible');
+  renderEditorList();
+}
+
+function closeEditor() {
+  document.getElementById('editor-screen').style.display = 'none';
+  cancelEdit();
+  showStartScreen();
+}
+
+function renderEditorList() {
+  const list = document.getElementById('editor-list');
+  document.getElementById('editor-count').textContent = ALL_CARDS.length;
+  list.innerHTML = '';
+  ALL_CARDS.forEach((card, i) => {
+    const el = document.createElement('div');
+    el.className = 'editor-card' + (editingIndex === i ? ' editing' : '');
+    el.id = 'editor-card-' + i;
+    el.draggable = true;
+    el.dataset.index = i;
+    el.innerHTML = `
+      <div class="drag-handle" title="Перетащить">⠿</div>
+      <div class="editor-card-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="editor-card-body">
+        <div class="editor-card-q">${escHtml(card.q)}</div>
+        <div class="editor-card-a">${escHtml(card.a)}</div>
+      </div>
+      <div class="editor-card-actions">
+        <button class="btn-card-edit" onclick="editCard(${i})">✎ ред.</button>
+        <button class="btn-card-del" onclick="deleteCard(${i})">✕</button>
+      </div>`;
+
+    el.addEventListener('dragstart', onDragStart);
+    el.addEventListener('dragover', onDragOver);
+    el.addEventListener('drop', onDrop);
+    el.addEventListener('dragend', onDragEnd);
+    list.appendChild(el);
+  });
+}
+
+let dragSrcIndex = null;
+
+function onDragStart(e) {
+  dragSrcIndex = parseInt(e.currentTarget.dataset.index);
+  e.currentTarget.style.opacity = '0.4';
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function onDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('.editor-card').forEach(c => c.classList.remove('drag-over'));
+  e.currentTarget.classList.add('drag-over');
+}
+
+function onDrop(e) {
+  e.preventDefault();
+  const targetIndex = parseInt(e.currentTarget.dataset.index);
+  if (dragSrcIndex === null || dragSrcIndex === targetIndex) return;
+  const moved = ALL_CARDS.splice(dragSrcIndex, 1)[0];
+  ALL_CARDS.splice(targetIndex, 0, moved);
+  if (editingIndex === dragSrcIndex) editingIndex = targetIndex;
+  renderEditorList();
+}
+
+function onDragEnd(e) {
+  e.currentTarget.style.opacity = '1';
+  document.querySelectorAll('.editor-card').forEach(c => c.classList.remove('drag-over'));
+  dragSrcIndex = null;
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function saveCard() {
+  const q = document.getElementById('input-q').value.trim();
+  const a = document.getElementById('input-a').value.trim();
+  if (!q || !a) { alert('Заполни оба поля'); return; }
+
+  if (editingIndex !== null) {
+    ALL_CARDS[editingIndex] = { q, a };
+  } else {
+    ALL_CARDS.push({ q, a });
+  }
+
+  cancelEdit();
+  renderEditorList();
+}
+
+function editCard(i) {
+  editingIndex = i;
+  document.getElementById('input-q').value = ALL_CARDS[i].q;
+  document.getElementById('input-a').value = ALL_CARDS[i].a;
+  document.getElementById('editor-form-title').textContent = 'Редактировать карточку #' + (i+1);
+  document.getElementById('btn-cancel-edit').style.display = 'inline-block';
+  document.getElementById('editor-form').scrollIntoView({ behavior: 'smooth' });
+  renderEditorList();
+}
+
+function cancelEdit() {
+  editingIndex = null;
+  document.getElementById('input-q').value = '';
+  document.getElementById('input-a').value = '';
+  document.getElementById('editor-form-title').textContent = 'Новая карточка';
+  document.getElementById('btn-cancel-edit').style.display = 'none';
+}
+
+function deleteCard(i) {
+  if (!confirm(`Удалить карточку #${i+1}?`)) return;
+  ALL_CARDS.splice(i, 1);
+  if (editingIndex === i) cancelEdit();
+  renderEditorList();
+}
+
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(ALL_CARDS, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'cards.json';
+  a.click();
+}
 
 function getSavedWrong() {
   try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
@@ -834,7 +1234,7 @@ function restart(mode) {
   init(mode);
 }
 
-// start
+// start — always load from cards.json
 fetch('cards.json')
   .then(r => r.json())
   .then(data => {
