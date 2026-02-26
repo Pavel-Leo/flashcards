@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlashCards — Подготовка к экзаменам</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0e0c;
+    --surface: #1a1915;
+    --surface2: #242320;
+    --border: #2e2c28;
+    --accent: #d4a853;
+    --accent-dim: rgba(212,168,83,0.12);
+    --green: #4caf7d;
+    --green-dim: rgba(76,175,125,0.12);
+    --red: #e05a5a;
+    --red-dim: rgba(224,90,90,0.12);
+    --text: #e8e4dc;
+    --text-dim: #7a7670;
+    --text-mid: #b0aa9f;
+    --radius: 16px;
+    --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  body {
+    font-family: 'Fraunces', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 80px;
+    background-image: radial-gradient(ellipse at 20% 0%, rgba(212,168,83,0.04) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 100%, rgba(76,175,125,0.03) 0%, transparent 60%);
+  }
+
+  /* HEADER */
+  header {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 48px;
+  }
+
+  .logo {
+    font-size: 1.1rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .stats-bar {
+    display: flex;
+    gap: 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+  }
+
+  .stat { display: flex; align-items: center; gap: 6px; }
+  .stat-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .stat-dot.green { background: var(--green); }
+  .stat-dot.red { background: var(--red); }
+  .stat-val { color: var(--text-mid); }
+
+  /* PROGRESS */
+  .progress-wrap {
+    width: 100%;
+    max-width: 680px;
+    margin-bottom: 36px;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+
+  .progress-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #e8c47a);
+    border-radius: 2px;
+    transition: width var(--transition);
+  }
+
+  /* CARD */
+  .card-wrap {
+    width: 100%;
+    max-width: 680px;
+    perspective: 1200px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 52px 52px 44px;
+    position: relative;
+    animation: cardIn 0.5s cubic-bezier(0.4,0,0.2,1) both;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(16px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .card-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 28px;
+  }
+
+  .card-label span {
+    color: var(--accent);
+    font-size: 0.7rem;
+  }
+
+  .question {
+    font-size: 1.55rem;
+    font-weight: 300;
+    line-height: 1.55;
+    color: var(--text);
+    flex: 1;
+    margin-bottom: 40px;
+  }
+
+  /* ANSWER BLOCK */
+  .answer-block {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease;
+  }
+
+  .answer-block.visible {
+    max-height: 400px;
+    opacity: 1;
+  }
+
+  .answer-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .answer-divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .answer-divider-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .answer {
+    font-size: 1.1rem;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--text-mid);
+    padding: 20px 24px;
+    background: var(--surface2);
+    border-radius: 10px;
+    border-left: 3px solid var(--accent);
+    margin-bottom: 32px;
+  }
+
+  /* BUTTONS */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 14px 24px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-know {
+    background: var(--green-dim);
+    border-color: rgba(76,175,125,0.25);
+    color: var(--green);
+  }
+
+  .btn-know:hover {
+    background: rgba(76,175,125,0.2);
+    border-color: var(--green);
+    transform: translateY(-1px);
+  }
+
+  .btn-dontknow {
+    background: var(--red-dim);
+    border-color: rgba(224,90,90,0.25);
+    color: var(--red);
+  }
+
+  .btn-dontknow:hover {
+    background: rgba(224,90,90,0.2);
+    border-color: var(--red);
+    transform: translateY(-1px);
+  }
+
+  .btn-next {
+    background: var(--accent-dim);
+    border-color: rgba(212,168,83,0.3);
+    color: var(--accent);
+    width: 100%;
+    margin-top: 16px;
+    font-size: 0.82rem;
+    padding: 16px;
+  }
+
+  .btn-next:hover {
+    background: rgba(212,168,83,0.2);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  /* CHOICE indicator */
+  .choice-indicator {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    padding: 10px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+
+  .choice-indicator.know {
+    display: flex;
+    background: var(--green-dim);
+    color: var(--green);
+    border: 1px solid rgba(76,175,125,0.2);
+  }
+
+  .choice-indicator.dontknow {
+    display: flex;
+    background: var(--red-dim);
+    color: var(--red);
+    border: 1px solid rgba(224,90,90,0.2);
+  }
+
+  /* COMPLETE SCREEN */
+  .complete {
+    display: none;
+    width: 100%;
+    max-width: 680px;
+    text-align: center;
+    animation: cardIn 0.5s cubic-bezier(0.4,0,0.2,1) both;
+  }
+
+  .complete.visible { display: block; }
+  .card-wrap.hidden { display: none; }
+
+  .complete-icon {
+    font-size: 3rem;
+    margin-bottom: 24px;
+    display: block;
+  }
+
+  .complete h2 {
+    font-size: 2rem;
+    font-weight: 300;
+    margin-bottom: 12px;
+  }
+
+  .complete p {
+    color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    margin-bottom: 40px;
+  }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+  }
+
+  .result-card .num {
+    font-size: 2.8rem;
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .result-card.green .num { color: var(--green); }
+  .result-card.red .num { color: var(--red); }
+
+  .result-card .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .btn-restart {
+    background: var(--accent-dim);
+    border: 1px solid rgba(212,168,83,0.3);
+    color: var(--accent);
+    padding: 16px 48px;
+    border-radius: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-restart:hover {
+    background: rgba(212,168,83,0.2);
+    border-color: var(--accent);
+  }
+
+  .btn-restart-wrong {
+    background: var(--red-dim);
+    border: 1px solid rgba(224,90,90,0.25);
+    color: var(--red);
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 12px;
+  }
+
+  .btn-restart-wrong:hover {
+    background: rgba(224,90,90,0.2);
+    border-color: var(--red);
+  }
+
+  .btn-restart-saved {
+    background: rgba(100,120,220,0.1);
+    border: 1px solid rgba(100,120,220,0.3);
+    color: #8899ff;
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 12px;
+  }
+
+  .btn-restart-saved:hover {
+    background: rgba(100,120,220,0.2);
+    border-color: #8899ff;
+  }
+
+  .saved-banner {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: #8899ff;
+    background: rgba(100,120,220,0.08);
+    border: 1px solid rgba(100,120,220,0.2);
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 32px;
+    display: none;
+  }
+
+  .saved-banner.visible { display: block; }
+
+  /* START SCREEN */
+  .start-screen {
+    width: 100%;
+    max-width: 680px;
+    animation: cardIn 0.5s cubic-bezier(0.4,0,0.2,1) both;
+  }
+
+  .start-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .start-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .start-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 24px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .start-btn:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+  }
+
+  .start-btn-saved:hover {
+    border-color: #8899ff;
+  }
+
+  .start-btn-saved:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .start-btn-icon { font-size: 2rem; }
+
+  .start-btn-label {
+    font-family: 'Fraunces', serif;
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: var(--text);
+  }
+
+  .start-btn-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+  }
+
+  .order-toggle {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+    margin-top: 4px;
+  }
+
+  .toggle-opt {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-dim);
+    transition: all 0.15s ease;
+  }
+
+  .toggle-opt.active {
+    background: var(--surface2);
+    color: var(--accent);
+    border: 1px solid rgba(212,168,83,0.25);
+  }
+
+  /* Decorative number */
+  .bg-number {
+    position: absolute;
+    top: 24px;
+    right: 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 5rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.025);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">flash<em>cards</em></div>
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-dot green"></div>
+      <span>Знаю:</span>
+      <span class="stat-val" id="stat-know">0</span>
+    </div>
+    <div class="stat">
+      <div class="stat-dot red"></div>
+      <span>Не знаю:</span>
+      <span class="stat-val" id="stat-dontknow">0</span>
+    </div>
+  </div>
+</header>
+
+<!-- START SCREEN -->
+<div class="start-screen" id="start-screen">
+  <div class="start-title">Выберите режим</div>
+  <div class="start-buttons">
+    <div class="start-btn start-btn-all" onclick="startMode('all')">
+      <span class="start-btn-icon">📚</span>
+      <span class="start-btn-label">Все карточки</span>
+      <span class="start-btn-sub" id="start-sub-all"></span>
+      <div class="order-toggle" onclick="event.stopPropagation()">
+        <button class="toggle-opt" id="toggle-shuffle" onclick="setOrder('shuffle')">перемешать</button>
+        <button class="toggle-opt" id="toggle-order" onclick="setOrder('order')">по порядку</button>
+      </div>
+    </div>
+    <button class="start-btn start-btn-saved" id="start-btn-saved" onclick="startMode('saved')">
+      <span class="start-btn-icon">📌</span>
+      <span class="start-btn-label">Сохранённые ошибки</span>
+      <span class="start-btn-sub" id="start-sub-saved"></span>
+    </button>
+  </div>
+</div>
+
+<div class="progress-wrap" id="progress-wrap" style="display:none">
+  <div class="progress-meta">
+    <span id="progress-text">Карточка 1 из 8</span>
+    <span id="progress-pct">0%</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+</div>
+
+<div class="card-wrap" id="card-wrap" style="display:none">
+  <div class="card" id="card">
+    <div class="bg-number" id="bg-number">01</div>
+    <div class="card-label">Вопрос <span id="q-num">01</span></div>
+    <div class="question" id="question-text"></div>
+
+    <div id="answer-block" class="answer-block">
+      <div class="answer-divider">
+        <div class="answer-divider-line"></div>
+        <div class="answer-divider-label">Ответ</div>
+        <div class="answer-divider-line"></div>
+      </div>
+      <div class="choice-indicator" id="choice-indicator"></div>
+      <div class="answer" id="answer-text"></div>
+      <button class="btn btn-next" id="btn-next">Следующая карточка →</button>
+    </div>
+
+    <div class="btn-row" id="btn-row">
+      <button class="btn btn-know" id="btn-know" onclick="reveal('know')">✓ &nbsp;Знаю</button>
+      <button class="btn btn-dontknow" id="btn-dontknow" onclick="reveal('dontknow')">✗ &nbsp;Не знаю</button>
+    </div>
+  </div>
+</div>
+
+<div class="complete" id="complete">
+  <span class="complete-icon">🎓</span>
+  <h2>Сессия завершена</h2>
+  <p id="complete-sub"></p>
+  <div class="result-grid">
+    <div class="result-card green">
+      <div class="num" id="res-know">0</div>
+      <div class="label">Знал ответ</div>
+    </div>
+    <div class="result-card red">
+      <div class="num" id="res-dontknow">0</div>
+      <div class="label">Не знал ответ</div>
+    </div>
+  </div>
+
+  <div class="saved-banner" id="saved-banner"></div>
+  <button class="btn-restart" onclick="showStartScreen()">← На главную</button>
+  <button class="btn-restart" style="margin-left:12px" onclick="restart(false)">Начать заново</button>
+  <button class="btn-restart-wrong" id="btn-wrong-only" onclick="restart('session')">Повторить ошибки сессии</button>
+  <button class="btn-restart-saved" id="btn-saved" onclick="restart('saved')">Повторить сохранённые ошибки</button>
+</div>
+
+<script>
+let ALL_CARDS = [];
+let cards = [];
+let wrongCards = [];
+let current = 0;
+let knows = 0;
+let donts = 0;
+let answered = false;
+let lastChoice = null;
+
+const LS_KEY = 'flashcards_saved_wrong';
+
+function getSavedWrong() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
+  catch { return []; }
+}
+
+function saveWrong(list) {
+  localStorage.setItem(LS_KEY, JSON.stringify(list));
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+let orderMode = 'shuffle'; // 'shuffle' | 'order'
+
+function setOrder(mode) {
+  orderMode = mode;
+  document.getElementById('toggle-shuffle').classList.toggle('active', mode === 'shuffle');
+  document.getElementById('toggle-order').classList.toggle('active', mode === 'order');
+}
+
+function showStartScreen() {
+  const saved = getSavedWrong();
+  const savedBtn = document.getElementById('start-btn-saved');
+  document.getElementById('start-sub-all').textContent = ALL_CARDS.length + ' карточек';
+
+  if (saved.length > 0) {
+    savedBtn.disabled = false;
+    document.getElementById('start-sub-saved').textContent = saved.length + ' карточек';
+  } else {
+    savedBtn.disabled = true;
+    document.getElementById('start-sub-saved').textContent = 'нет сохранённых';
+  }
+
+  document.getElementById('start-screen').style.display = 'block';
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('card-wrap').style.display = 'none';
+  document.getElementById('complete').classList.remove('visible');
+  setOrder(orderMode);
+}
+
+function startMode(mode) {
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('progress-wrap').style.display = 'block';
+  document.getElementById('card-wrap').style.display = 'block';
+  init(mode === 'saved' ? 'saved' : null);
+}
+
+function init(mode) {
+  let subset = null;
+  if (mode === 'session') subset = wrongCards;
+  if (mode === 'saved')   subset = getSavedWrong();
+
+  cards = subset && subset.length
+    ? shuffle([...subset])
+    : (orderMode === 'shuffle' ? shuffle([...ALL_CARDS]) : [...ALL_CARDS]);
+  wrongCards = [];
+  current = 0;
+  knows = 0;
+  donts = 0;
+  updateStats();
+  showCard();
+  document.getElementById('complete').classList.remove('visible');
+  document.getElementById('card-wrap').classList.remove('hidden');
+  document.getElementById('card-wrap').style.display = 'block';
+  document.getElementById('progress-wrap').style.display = 'block';
+}
+
+function showCard() {
+  answered = false;
+  const card = cards[current];
+  const num = String(current + 1).padStart(2, '0');
+
+  document.getElementById('q-num').textContent = num;
+  document.getElementById('bg-number').textContent = num;
+  document.getElementById('question-text').textContent = card.q;
+  document.getElementById('answer-text').textContent = card.a;
+
+  const ab = document.getElementById('answer-block');
+  ab.classList.remove('visible');
+
+  const br = document.getElementById('btn-row');
+  br.style.display = 'flex';
+
+  const ci = document.getElementById('choice-indicator');
+  ci.className = 'choice-indicator';
+  ci.textContent = '';
+
+  updateProgress();
+
+  // animate card
+  const cardEl = document.getElementById('card');
+  cardEl.style.animation = 'none';
+  cardEl.offsetHeight;
+  cardEl.style.animation = 'cardIn 0.45s cubic-bezier(0.4,0,0.2,1) both';
+}
+
+function reveal(choice) {
+  if (answered) return;
+  answered = true;
+  lastChoice = choice;
+
+  if (choice === 'know') {
+    knows++;
+    // если этот вопрос был в сохранённых ошибках и теперь знаем — убираем
+    const saved = getSavedWrong();
+    const updated = saved.filter(c => c.q !== cards[current].q);
+    saveWrong(updated);
+  } else {
+    donts++;
+    wrongCards.push(cards[current]);
+    // добавляем в сохранённые ошибки (без дублей)
+    const saved = getSavedWrong();
+    const exists = saved.some(c => c.q === cards[current].q);
+    if (!exists) saveWrong([...saved, cards[current]]);
+  }
+
+  updateStats();
+
+  const ci = document.getElementById('choice-indicator');
+  if (choice === 'know') {
+    ci.className = 'choice-indicator know';
+    ci.innerHTML = '✓ &nbsp;Вы ответили: знаю';
+  } else {
+    ci.className = 'choice-indicator dontknow';
+    ci.innerHTML = '✗ &nbsp;Вы ответили: не знаю';
+  }
+
+  document.getElementById('btn-row').style.display = 'none';
+  document.getElementById('answer-block').classList.add('visible');
+}
+
+document.getElementById('btn-next').addEventListener('click', () => {
+  current++;
+  if (current >= cards.length) {
+    showComplete();
+  } else {
+    showCard();
+  }
+});
+
+function updateStats() {
+  document.getElementById('stat-know').textContent = knows;
+  document.getElementById('stat-dontknow').textContent = donts;
+}
+
+function updateProgress() {
+  const total = cards.length;
+  const done = current;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('progress-text').textContent = `Карточка ${current + 1} из ${total}`;
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+function showComplete() {
+  document.getElementById('card-wrap').classList.add('hidden');
+  const comp = document.getElementById('complete');
+  comp.classList.add('visible');
+  document.getElementById('res-know').textContent = knows;
+  document.getElementById('res-dontknow').textContent = donts;
+
+  const pct = Math.round((knows / cards.length) * 100);
+  document.getElementById('complete-sub').textContent =
+    `Результат: ${pct}% правильных ответов из ${cards.length} карточек`;
+
+  document.getElementById('btn-wrong-only').style.display =
+    wrongCards.length > 0 ? 'inline-block' : 'none';
+
+  const saved = getSavedWrong();
+  const savedBtn = document.getElementById('btn-saved');
+  const savedBanner = document.getElementById('saved-banner');
+  if (saved.length > 0) {
+    savedBtn.style.display = 'inline-block';
+    savedBanner.classList.add('visible');
+    savedBanner.textContent = `📌 В сохранённых ошибках: ${saved.length} карточек (накоплено за все сессии)`;
+  } else {
+    savedBtn.style.display = 'none';
+    savedBanner.classList.remove('visible');
+  }
+
+  // update progress to 100%
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('progress-pct').textContent = '100%';
+  document.getElementById('progress-text').textContent = `Завершено: ${cards.length} из ${cards.length}`;
+}
+
+function restart(mode) {
+  init(mode);
+}
+
+// start
+fetch('cards.json')
+  .then(r => r.json())
+  .then(data => {
+    ALL_CARDS = data;
+    showStartScreen();
+  })
+  .catch(() => {
+    document.getElementById('card-wrap').innerHTML =
+      '<div style="color:#e05a5a;font-family:DM Mono,monospace;font-size:0.8rem;padding:40px;text-align:center">Не удалось загрузить cards.json.<br>Убедитесь что файл лежит рядом с index.html и открыт через веб-сервер.</div>';
+  });
+</script>
+</body>
+</html>
